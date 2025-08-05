@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
 
+env:
+  AWS_REGION: us-east-1
+  ECR_REPO: ${{ secrets.ECR_REPOSITORY }}
+  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
