@@ -68,18 +68,33 @@ jobs:
             port: '22'
             script: |
 
-              hostname
-              whoami
-              uptime
-              IMAGE_URI=${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:latest
+              script: |
+                echo "🏁 Checking system info..."
+                hostname
+                whoami
+                uptime
               
-              aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+                echo "📦 Installing AWS CLI & Docker..."
+                sudo apt-get update
+                sudo apt-get install -y awscli docker.io
               
-              docker pull $IMAGE_URI
+                echo "🔑 Giving user docker permissions..."
+                sudo usermod -aG docker $USER
+              
+                echo "✅ Checking installations..."
+                aws --version
+                docker --version
+              
+                IMAGE_URI=${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:latest
+              
+                aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+              
+                docker pull $IMAGE_URI
+              
+                docker stop myapp || true
+                docker rm myapp || true
+              
+                docker run -d --name myapp -p 80:3000 $IMAGE_URI
 
-              docker stop myapp || true
-              docker rm myapp || true
-
-              docker run -d --name myapp -p 80:3000 $IMAGE_URI
 
       
