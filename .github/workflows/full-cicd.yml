@@ -8,6 +8,7 @@ env:
   AWS_REGION: us-east-1
   ECR_REPO: ${{ secrets.ECR_REPOSITORY }}
   AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+  
 
 jobs:
   build-and-push:
@@ -16,6 +17,7 @@ jobs:
     steps:
         - name: Checkout code
           uses: actions/checkout@v4
+          
         - name: Set up Python
           uses: actions/setup-python@v4
           with:
